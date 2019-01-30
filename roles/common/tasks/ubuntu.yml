@@ -127,3 +127,6 @@
   with_items:
     - linux-headers-generic
     - "linux-headers-{{ ansible_kernel }}"
+
+- include_tasks: iptables.yml
+  tags: iptables
