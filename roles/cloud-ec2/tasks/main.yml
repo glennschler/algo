@@ -10,6 +10,7 @@
     ec2_ami_facts:
       aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
+      security_token: "{{ session_token }}"
       owners: "{{ cloud_providers.ec2.image.owner }}"
       region: "{{ algo_region }}"
       filters:

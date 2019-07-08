@@ -3,6 +3,7 @@
   ec2_ami_facts:
     aws_access_key: "{{ access_key }}"
     aws_secret_key: "{{ secret_key }}"
+    security_token: "{{ session_token }}"
     owners: self
     region: "{{ algo_region }}"
     filters:
@@ -14,6 +15,7 @@
   ec2_ami_copy:
     aws_access_key: "{{ access_key }}"
     aws_secret_key: "{{ secret_key }}"
+    security_token: "{{ session_token }}"
     encrypted: yes
     name: algo
     kms_key_id: "{{ kms_key_id | default(omit) }}"

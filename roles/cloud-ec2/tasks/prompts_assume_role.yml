@@ -1,0 +1,42 @@
+---
+- pause:
+    prompt: |
+      Enter your aws_mfa_serial
+    echo: false
+  register: _aws_mfa_serial
+  when:
+    - aws_mfa_serial|length|int == 0
+
+- set_fact:
+    aws_mfa_serial: "{{ aws_mfa_serial|default(None, true) or _aws_mfa_serial.user_input|default(None, true) }}"
+
+- pause:
+    prompt: |
+      Enter your aws_mfa_token
+    echo: false
+  register: _aws_mfa_token
+  when:
+    - aws_mfa_serial|default("", true)|length|int != 0
+
+- set_fact:
+    aws_mfa_token: "{{ _aws_mfa_token.user_input|default(None, true) }}"
+
+- block:
+  - name: Get Session Token
+    sts_assume_role:
+      duration_seconds: 900
+      aws_access_key: "{{ access_key }}"
+      aws_secret_key: "{{ secret_key }}"
+      role_arn: "{{ assume_role_arn }}"
+      role_session_name: "{{ ansible_date_time.iso8601_basic }}"
+      mfa_serial_number: "{{ aws_mfa_serial|default(omit, true) }}"
+      mfa_token: "{{ aws_mfa_token|default(omit, true) }}"
+    register: session_credentials
+
+  - set_fact:
+      access_key: "{{ session_credentials.sts_creds.access_key }}"
+      secret_key: "{{ session_credentials.sts_creds.secret_key }}"
+      session_token: "{{ session_credentials.sts_creds.session_token|default(None, true) }}"
+    when:
+      - session_credentials is defined
+      - session_credentials.sts_creds is defined
