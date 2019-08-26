@@ -107,6 +107,13 @@ Possible options can be gathered via cli `aws ec2 describe-regions`
 Additional variables:
 
 - [encrypted](https://aws.amazon.com/blogs/aws/new-encrypted-ebs-boot-volumes/) - Encrypted EBS boot volume. Boolean (Default: false)
+  * Additional IAM permissions along with the below minimum is required for deployment
+- [size](https://aws.amazon.com/ec2/instance-types/) - EC2 instance type. String (Default: t2.micro)
+- [instance_market_type](https://aws.amazon.com/ec2/pricing/) - Two pricing models are supported: on-demand and spot. String (Default: on-demand)
+  * One additional IAM permission along with the below minimum is required for deployment:
+  ```
+    "ec2:CreateLaunchTemplate"
+  ```
 
 #### Minimum required IAM permissions for deployment:
 

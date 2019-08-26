@@ -16,9 +16,17 @@ Parameters:
     Default: ''
   EbsEncrypted:
     Type: String
+  InstanceMarketTypeParameter:
+    Description: Launch a Spot instance or standard on-demand instance
+    Default: on-demand
+    Type: String
+    AllowedValues:
+      - spot
+      - on-demand
 Conditions:
   AllocateNewEIP: !Equals [!Ref UseThisElasticIP, '']
   AssociateExistingEIP: !Not [!Equals [!Ref UseThisElasticIP, '']]
+  InstanceIsSpot: !Equals [spot, !Ref InstanceMarketTypeParameter]
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -142,6 +150,15 @@ Resources:
         - Key: Name
           Value: !Ref AWS::StackName
 
+  EC2LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Condition: InstanceIsSpot    # Only create this template if requested
+    Properties:                  # a spot instance_market_type in config.cfg
+      LaunchTemplateName: !Ref AWS::StackName
+      LaunchTemplateData:
+        InstanceMarketOptions:
+          MarketType: spot
+
   EC2Instance:
     Type: AWS::EC2::Instance
     DependsOn:
@@ -174,6 +191,14 @@ Resources:
         Ref: ImageIdParameter
       SubnetId: !Ref Subnet
       Ipv6AddressCount: 1
+      LaunchTemplate:
+        !If                 # Only if EC2LaunchTemplate was created above
+          - InstanceIsSpot
+          -
+            LaunchTemplateId:
+              !Ref EC2LaunchTemplate
+            Version: 1
+          - !Ref AWS::NoValue  # Else this LaunchTemplate property is not set
       UserData:
         "Fn::Base64":
           !Sub |

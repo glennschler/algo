@@ -14,6 +14,7 @@
       WireGuardPort: "{{ wireguard_port }}"
       UseThisElasticIP: "{{ existing_eip }}"
       EbsEncrypted: "{{ encrypted }}"
+      InstanceMarketTypeParameter: "{{ cloud_providers.ec2.instance_market_type }}"
     tags:
       Environment: Algo
   register: stack

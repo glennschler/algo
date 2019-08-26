@@ -55,15 +55,16 @@ $ ./algo
 
   What provider would you like to use?
     1. DigitalOcean
-    2. Amazon EC2
-    3. Microsoft Azure
-    4. Google Compute Engine
-    5. Scaleway
-    6. OpenStack (DreamCompute optimised)
-    7. Install to existing Ubuntu 16.04 server (Advanced)
+    2. Amazon Lightsail
+    3. Amazon EC2
+    4. Microsoft Azure
+    5. Google Compute Engine
+    6. Scaleway
+    7. OpenStack (DreamCompute optimised)
+    8. Install to existing Ubuntu 16.04 server (Advanced)
 
 Enter the number of your desired provider
-: 2
+: 3
 ```
 
 Next you will be asked for the AWS Access Key (Access Key ID) and AWS Secret Key (Secret Access Key) that you received in  the CSV file when you setup the account (don't worry if you don't see your text entered in the console; the key input is  hidden here by Algo).
