@@ -27,10 +27,22 @@ Parameters:
     AllowedValues:
       - spot
       - on-demand
+  OpenIpsecPorts:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+  OpenWireguardPorts:
+    Type: String
+    AllowedValues:
+      - true
+      - false
 Conditions:
   AllocateNewEIP: !Equals [!Ref UseThisElasticIP, '']
   AssociateExistingEIP: !Not [!Equals [!Ref UseThisElasticIP, '']]
   InstanceIsSpot: !Equals [spot, !Ref InstanceMarketTypeParameter]
+  CreateIpsecIngress: !Equals [true, !Ref OpenIpsecPorts]
+  CreateWireguardIngress: !Equals [true, !Ref OpenWireguardPorts]
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -132,27 +144,49 @@ Resources:
       - Subnet
     Properties:
       VpcId: !Ref VPC
-      GroupDescription: Enable SSH and IPsec
+      GroupDescription: Enable Ingress SSH, IPSec and Wireguard
       SecurityGroupIngress:
         - IpProtocol: tcp
+          Description: SSH
           FromPort: !Ref SshPort
           ToPort: !Ref SshPort
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: udp
-          FromPort: '500'
-          ToPort: '500'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: udp
-          FromPort: '4500'
-          ToPort: '4500'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: udp
-          FromPort: !Ref WireGuardPort
-          ToPort: !Ref WireGuardPort
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: !Ref AWS::StackName
+
+  InstanceIngressWireguard:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: CreateWireguardIngress
+    Properties:
+      GroupId: !Ref InstanceSecurityGroup
+      Description: Wireguard
+      IpProtocol: udp
+      FromPort: !Ref WireGuardPort
+      ToPort: !Ref WireGuardPort
+      CidrIp: 0.0.0.0/0
+
+  InstanceIngressIPSec01:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: CreateIpsecIngress
+    Properties:
+      GroupId: !Ref InstanceSecurityGroup
+      Description: IPSec-IKEv2
+      IpProtocol: udp
+      FromPort: '500'
+      ToPort: '500'
+      CidrIp: 0.0.0.0/0
+
+  InstanceIngressIPSec02:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: CreateIpsecIngress
+    Properties:
+      GroupId: !Ref InstanceSecurityGroup
+      Description: IPSec-NAT-T
+      IpProtocol: udp
+      FromPort: '4500'
+      ToPort: '4500'
+      CidrIp: 0.0.0.0/0
 
   EC2LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
