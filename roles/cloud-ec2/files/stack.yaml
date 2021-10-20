@@ -5,10 +5,8 @@ Parameters:
   InstanceTypeParameter:
     Type: String
     Default: t2.micro
-  PublicSSHKeyParameter:
-    Type: String
   ImageIdParameter:
-    Type: String
+    Type: AWS::EC2::Image::Id
   WireGuardPort:
     Type: String
   UseThisElasticIP:
