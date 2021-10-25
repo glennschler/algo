@@ -1,3 +1,13 @@
+# Temporary fork. This branch is up to date with upstream, plus some local branches merged to test features
+
+* [feature] EC2 instance type with arm64 architecture fails ([#14280][i14280])
+* [feature] EC2 IPSec security group ports open even when disabled ([#14293][i14293])
+* [feature] EC2 CloudFormation linter identifies public key is not used ([#14294][i14294])
+
+[i14280]: https://github.com/trailofbits/algo/issues/14280
+[i14293]: https://github.com/trailofbits/algo/issues/14293
+[i14294]: https://github.com/trailofbits/algo/issues/14294
+
 # Algo VPN
 
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40AlgoVPN)](https://twitter.com/AlgoVPN)
