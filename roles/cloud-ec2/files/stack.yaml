@@ -58,8 +58,11 @@ Resources:
 
   Subnet:
     Type: AWS::EC2::Subnet
+    DependsOn:
+      - VPCIPv6
     Properties:
       CidrBlock: 172.16.254.0/23
+      Ipv6CidrBlock: !Select [0, !Cidr [!Select [0, !GetAtt 'VPC.Ipv6CidrBlocks'], 1, 64]]
       MapPublicIpOnLaunch: false
       VpcId: !Ref VPC
       Tags:
@@ -101,20 +104,6 @@ Resources:
       RouteTableId: !Ref RouteTable
       DestinationIpv6CidrBlock: "::/0"
       GatewayId: !Ref InternetGateway
-
-  SubnetIPv6:
-    Type: AWS::EC2::SubnetCidrBlock
-    DependsOn:
-      - RouteIPv6
-      - VPC
-      - VPCIPv6
-    Properties:
-      Ipv6CidrBlock:
-        "Fn::Join":
-            - ""
-            - - !Select [0, !Split [ "::", !Select [0, !GetAtt VPC.Ipv6CidrBlocks] ]]
-              - "::dead:beef/64"
-      SubnetId: !Ref Subnet
 
   RouteSubnet:
     Type: "AWS::EC2::SubnetRouteTableAssociation"
@@ -166,7 +155,6 @@ Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     DependsOn:
-      - SubnetIPv6
       - Subnet
       - InstanceSecurityGroup
     Properties:
