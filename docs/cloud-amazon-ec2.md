@@ -12,11 +12,15 @@ The cheapest EC2 plan you can choose is the "Free Plan" a.k.a. the "AWS Free Tie
 
 As of the time of this writing (July 2018), the Free Tier limits include "750 hours of Amazon EC2 Linux t2.micro instance  usage" per month, 15 GB of bandwidth (outbound) per month, and 30 GB of cloud storage. Algo will not even use 1% of the storage limit, but you may have to monitor your bandwidth usage or keep an eye out for the email from Amazon when you are about to exceed the Free Tier limits.
 
+Additional configurations are documented in the [EC2 section of the deploy from ansible guide](https://github.com/trailofbits/algo/blob/master/docs/deploy-from-ansible.md#amazon-ec2)
+
 ### Create an AWS permissions policy
 
 In the AWS console, find the policies menu: click Services > IAM > Policies. Click Create Policy.
 
 Here, you have the policy editor. Switch to the JSON tab and copy-paste over the existing empty policy with [the minimum required AWS policy needed for Algo deployment](https://github.com/trailofbits/algo/blob/master/docs/deploy-from-ansible.md#minimum-required-iam-permissions-for-deployment).
+
+When prompted to name the policy, name it `AlgoVPN_Provisioning`.
 
 ![Creating a new permissions policy in the AWS console.](/docs/images/aws-ec2-new-policy.png)
 
@@ -65,7 +69,7 @@ $ ./algo
     9. OpenStack (DreamCompute optimised)
     10. CloudStack (Exoscale optimised)
     11. Linode
-    12. Install to existing Ubuntu 18.04 or 20.04 server (for more advanced users)
+    12. Install to existing Ubuntu server (for more advanced users)
 
 Enter the number of your desired provider
 : 3
@@ -121,4 +125,5 @@ Enter the number of your desired region
 You will then be asked the remainder of the standard Algo setup questions.
 
 ## Cleanup
+
 If you've installed Algo onto EC2 multiple times, your AWS account may become cluttered with unused or deleted resources e.g. instances, VPCs, subnets, etc. This may cause future installs to fail. The easiest way to clean up after you're done with a server is to go to "CloudFormation" from the console and delete the CloudFormation stack associated with that server. Please note that unless you've enabled termination protection on your instance, deleting the stack this way will delete your instance without warning, so be sure you are deleting the correct stack.
